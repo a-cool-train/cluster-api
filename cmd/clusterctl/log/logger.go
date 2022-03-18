@@ -19,8 +19,6 @@ package log
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-
 	"github.com/go-logr/logr"
 	"github.com/pkg/errors"
 )
@@ -54,95 +52,13 @@ func NewLogger(options ...Option) logr.Logger {
 	for _, o := range options {
 		o(l)
 	}
-	return l
+	return *l.Logger
 }
 
 // logger defines a clusterctl friendly logr.Logger.
 type logger struct {
+	*logr.Logger
 	threshold *int
-	level     int
-	prefix    string
-	values    []interface{}
-}
-
-var _ logr.Logger = &logger{}
-
-// Enabled tests whether this Logger is enabled.
-func (l *logger) Enabled() bool {
-	if l.threshold == nil {
-		return true
-	}
-	return l.level <= *l.threshold
-}
-
-// Info logs a non-error message with the given key/value pairs as context.
-func (l *logger) Info(msg string, kvs ...interface{}) {
-	if l.Enabled() {
-		values := copySlice(l.values)
-		values = append(values, kvs...)
-		values = append(values, "msg", msg)
-		l.write(values)
-	}
-}
-
-// Error logs an error message with the given key/value pairs as context.
-func (l *logger) Error(err error, msg string, kvs ...interface{}) {
-	values := copySlice(l.values)
-	values = append(values, kvs...)
-	values = append(values, "msg", msg, "error", err)
-	l.write(values)
-}
-
-// V returns an InfoLogger value for a specific verbosity level.
-func (l *logger) V(level int) logr.Logger {
-	nl := l.clone()
-	nl.level = level
-	return nl
-}
-
-// WithName adds a new element to the logger's name.
-func (l *logger) WithName(name string) logr.Logger {
-	nl := l.clone()
-	if len(l.prefix) > 0 {
-		nl.prefix = l.prefix + "/"
-	}
-	nl.prefix += name
-	return nl
-}
-
-// WithValues adds some key-value pairs of context to a logger.
-func (l *logger) WithValues(kvList ...interface{}) logr.Logger {
-	nl := l.clone()
-	nl.values = append(nl.values, kvList...)
-	return nl
-}
-
-func (l *logger) write(values []interface{}) {
-	entry := logEntry{
-		Prefix: l.prefix,
-		Level:  l.level,
-		Values: values,
-	}
-	f, err := flatten(entry)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Fprintln(os.Stderr, f)
-}
-
-func (l *logger) clone() *logger {
-	return &logger{
-		threshold: l.threshold,
-		level:     l.level,
-		prefix:    l.prefix,
-		values:    copySlice(l.values),
-	}
-}
-
-func copySlice(in []interface{}) []interface{} {
-	out := make([]interface{}, len(in))
-	copy(out, in)
-	return out
 }
 
 // flatten returns a human readable/machine parsable text representing the LogEntry.

@@ -220,7 +220,7 @@ func TestInfoLines_Lock(t *testing.T) {
 		InfoLog: make([]line, 0),
 	}
 	l := &ControlPlaneInitMutex{
-		log:    logtester,
+		log:    logtester.Logger,
 		client: c,
 	}
 
@@ -300,5 +300,5 @@ func (l *logtests) Info(msg string, keysAndValues ...interface{}) {
 	})
 }
 func (l *logtests) WithValues(keysAndValues ...interface{}) logr.Logger {
-	return l
+	return l.Logger
 }

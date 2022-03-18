@@ -39,7 +39,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
@@ -78,8 +77,8 @@ type ClusterCacheTrackerOptions struct {
 }
 
 func setDefaultOptions(opts *ClusterCacheTrackerOptions) {
-	if opts.Log == nil {
-		opts.Log = log.NullLogger{}
+	if &opts.Log == nil {
+		opts.Log = logr.Discard()
 	}
 
 	if len(opts.ClientUncachedObjects) == 0 {

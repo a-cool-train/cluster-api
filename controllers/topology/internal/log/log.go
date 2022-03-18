@@ -117,10 +117,7 @@ func (l *topologyReconcileLogger) V(level int) Logger {
 func (l *topologyReconcileLogger) Infof(msg string, a ...interface{}) {
 	// If the logger implements CallDepthLogger, let's use WithCallDepth
 	// so the logger prints the log line of the caller not of the current line.
-	if logger, ok := l.Logger.(logr.CallDepthLogger); ok {
-		logger.WithCallDepth(1).Info(fmt.Sprintf(msg, a...))
-		return
-	}
+	l.Logger.WithCallDepth(1).Info(fmt.Sprintf(msg, a...))
 	l.Logger.Info(fmt.Sprintf(msg, a...))
 }
 

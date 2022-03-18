@@ -17,6 +17,7 @@ limitations under the License.
 package external
 
 import (
+	"github.com/go-logr/logr"
 	"testing"
 
 	. "github.com/onsi/gomega"
@@ -25,13 +26,12 @@ import (
 	clusterv1 "sigs.k8s.io/cluster-api/api/v1beta1"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
 var (
-	logger = log.NullLogger{}
+	logger = logr.Discard()
 )
 
 type fakeController struct {
