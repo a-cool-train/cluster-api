@@ -218,6 +218,7 @@ func TestInfoLines_Lock(t *testing.T) {
 
 	logtester := &logtests{
 		InfoLog: make([]line, 0),
+		Logger:  log.Log,
 	}
 	l := &ControlPlaneInitMutex{
 		log:    logtester.Logger,
